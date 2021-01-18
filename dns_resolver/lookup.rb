@@ -20,20 +20,14 @@ dns_raw = File.readlines("zone")
 
 def parse_dns(dns_raw)
   dns_record_hash = {}
-
-  for dns in dns_raw
-    dns = dns.strip
-    #remove comments and empty lines and create hash of format -
-    # {:"ruby-lang.org"=>{:type=>"A", :points_to=>"221.186.184.75"}}
-
-    if dns[0] != "#" and dns.length != 0
-      split_dns = dns.split(", ")
-      dns_record_hash[split_dns[1].to_sym] = {
-        :type => split_dns[0],
-        :points_to => split_dns[2],
-      }
-    end
-  end
+  #remove comments and empty lines and create hash of format -
+  # {:"ruby-lang.org"=>{:type=>"A", :points_to=>"221.186.184.75"}}
+  dns_raw.
+    map { |line| line.strip }.
+    reject { |line| line[0] == "#" }.
+    map { |line| line.strip.split(", ") }.
+    reject { |record| record.length < 3 }.
+    each { |data| dns_record_hash[data[1].to_sym] = { :type => data[0], :points_to => data[2] } }
   dns_record_hash
 end
 
