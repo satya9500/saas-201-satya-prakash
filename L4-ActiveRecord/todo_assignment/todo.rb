@@ -7,23 +7,35 @@ class Todo < ActiveRecord::Base
     "#{id}. #{display_status} #{todo_text} #{display_date}"
   end
 
-  def self.filter_todos
+  def self.map_to_displayable_string
     all.map { |todo| todo.to_displayable_string }
+  end
+
+  def self.overdue
+    all.where("due_date < ?", Date.today)
+  end
+
+  def self.due_today
+    all.where(due_date: Date.today)
+  end
+
+  def self.due_later
+    all.where("due_date > ?", Date.today)
   end
 
   def self.show_list
     puts "My Todo-list\n\n"
 
     puts "Overdue\n"
-    puts Todo.where("due_date < ?", Date.today).filter_todos
+    puts Todo.overdue.map_to_displayable_string
     puts "\n\n"
 
     puts "Due Today\n"
-    puts Todo.where(due_date: Date.today).filter_todos
+    puts Todo.due_today.map_to_displayable_string
     puts "\n\n"
 
     puts "Due Later\n"
-    puts Todo.where("due_date > ?", Date.today).filter_todos
+    puts Todo.due_later.map_to_displayable_string
     puts "\n\n"
   end
 
